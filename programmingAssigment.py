@@ -113,6 +113,93 @@ def viewTransactions(df):
         displayData = ["Type", "Amount", "Description", "Category", "Date"]
         print(df[displayData].to_string(index=True), "\n")
 
+# Allow the user to update a specific transaction
+def updateTransaction(df):
+    if df.empty:
+        print(f"{red}No transactions to update.{reset}\n")
+        return df
+    else:
+        viewTransactions(df)  # Show current entries
+        try:
+            index = int(input("Enter the index of transaction to update: "))
+            if 0 <= index < len(df):
+                transactionType = df.at[index, "Type"]  # get the transaction type
+
+                # Ask what fields to update
+                if input("Edit amount? (y/n): ").strip().lower() == "y":
+                    df.at[index, "Amount"] = float(input("Enter new amount: "))
+                if input("Edit description? (y/n): ").strip().lower() == "y":
+                    df.at[index, "Description"] = input("Enter new description: ")
+                if input("Edit category? (y/n): ").strip().lower() == "y":
+                    print(f"\nSelect a category for this {transactionType}:")
+                    categories = defaultCategories.get(transactionType, [])
+                    for i, cat in enumerate(categories, 1):
+                        print(f"{i}. {cat}")
+                    print(f"{len(categories)+1}. Other (custom category)")
+
+                    while True:
+                        try:
+                            choice = int(input("Choose a category number: "))
+                            if 1 <= choice <= len(categories):
+                                category = categories[choice - 1]
+                                break
+                            elif choice == len(categories) + 1:
+                                category = input("Enter custom category: ").strip()
+                                break
+                            else:
+                                print(f"{red}Invalid choice. Please try again.{reset}")
+                        except ValueError:
+                            print(f"{red}Please enter a valid number.{reset}")
+                    df.at[index, "Category"] = category  # <-- Don't forget to assign the new category
+
+                if input("Edit date? (y/n): ").strip().lower() == "y":
+                    while True:
+                        try:
+                            year = int(input("Enter new year (e.g. 2025): "))
+                            month = int(input("Enter new month (1-12): "))
+                            day = int(input("Enter new day (1-31): "))
+                            newDate = datetime.datetime(year, month, day).strftime("%Y-%m-%d")
+                            df.at[index, "Date"] = newDate
+                            df.at[index, "Month"] = pd.to_datetime(newDate).to_period("M").strftime("%Y-%m")
+                            break
+                        except ValueError:
+                            print(f"{red}Invalid date. Please try again.{reset}")
+                saveData(df)
+                print(f"{green}Transaction updated{reset}\n")
+            else:
+                print(f"{red}Invalid index{reset}\n")
+        except ValueError:
+            print(f"{red}Please enter a valid number.{reset}\n")
+        return df
+
+# Delete a specific transaction by index
+def deleteTransaction(df):
+    if df.empty:
+        print(f"{red}No transactions to delete.{reset}\n")
+        return df
+    else:
+        viewTransactions(df)
+        try:
+            index = int(input("Enter the index of transaction to delete: "))
+            if 0 <= index < len(df):
+                df = df.drop(index).reset_index(drop=True)
+                saveData(df)
+                print(f"{green}Transaction deleted{reset}\n")
+            else:
+                print(f"{red}Invalid index{reset}\n")
+        except ValueError:
+            print(f"{red}Please enter a valid number.{reset}\n")
+        return df
+
+# Calculate and display total income, expense, and current balance
+def showBalance(df):
+    income = df[df["Type"] == "income"]["Amount"].sum()
+    expense = df[df["Type"] == "expense"]["Amount"].sum()
+    balance = income - expense
+    print(f"{green}Total Income: £{income:.2f}{reset}")
+    print(f"{red}Total Expense: £{expense:.2f}{reset}")
+    print(f"Current Balance: £{balance:.2f}\n")
+
 # Main menu loop: allows users to choose actions
 def main():
     df = loadData()  # Load existing data or create new
@@ -121,7 +208,10 @@ def main():
         print("\n==== Personal Budget Monitor ====")
         print("1. Add Transaction")
         print("2. View Transactions")
-        print("3. Exit")
+        print("3. Update Transaction")
+        print("4. Delete Transaction")
+        print("5. Show Balance")
+        print("6. Exit")
         choice = input("Choose an option: ")
 
         # Menu logic
@@ -130,6 +220,12 @@ def main():
         elif choice == "2":
             viewTransactions(df)
         elif choice == "3":
+            df = updateTransaction(df)
+        elif choice == "4":
+            df = deleteTransaction(df)
+        elif choice == "5":
+            showBalance(df)
+        elif choice == "6":
             print(f"{green}Goodbye{reset}")
             break
         else:
