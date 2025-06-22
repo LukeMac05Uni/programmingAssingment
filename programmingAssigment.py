@@ -200,6 +200,40 @@ def showBalance(df):
     print(f"{red}Total Expense: £{expense:.2f}{reset}")
     print(f"Current Balance: £{balance:.2f}\n")
 
+# Generate a pie chart comparing total income and expenses
+def showGraph(df):
+    if df.empty:
+        print(f"{red}No data for graph.{reset}\n")
+        return
+    summary = df.groupby("Type")["Amount"].sum()
+    summary.plot(kind="pie", autopct='%1.1f%%', startangle=90)
+    plt.title("Income vs Expenses")
+    plt.ylabel("")  # Hides the y-axis label
+    plt.show()
+
+# Generate a bar chart showing monthly income and expense summary
+def showMonthlySummary(df):
+    if df.empty:
+        print(f"{red}No data available.{reset}\n")
+        return
+
+    # Parse date and update Month field
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+    df["Month"] = df["Date"].dt.to_period("M").astype(str)
+
+    # Group by month and type
+    summary = df.groupby(["Month", "Type"])["Amount"].sum().unstack(fill_value=0)
+
+    # Plot bar chart
+    summary.plot(kind="bar", figsize=(10, 5))
+    plt.title("Monthly Income vs Expenses")
+    plt.xlabel("Month")
+    plt.ylabel("Amount (£)")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.legend(title="Type")
+    plt.show()
+
 # Main menu loop: allows users to choose actions
 def main():
     df = loadData()  # Load existing data or create new
@@ -211,7 +245,9 @@ def main():
         print("3. Update Transaction")
         print("4. Delete Transaction")
         print("5. Show Balance")
-        print("6. Exit")
+        print("6. Show Pie Chart (Total Income vs Expenses)")
+        print("7. Show Bar Chart (Monthly Summary)")
+        print("8. Exit")
         choice = input("Choose an option: ")
 
         # Menu logic
@@ -226,6 +262,10 @@ def main():
         elif choice == "5":
             showBalance(df)
         elif choice == "6":
+            showGraph(df)
+        elif choice == "7":
+            showMonthlySummary(df)
+        elif choice == "8":
             print(f"{green}Goodbye{reset}")
             break
         else:
