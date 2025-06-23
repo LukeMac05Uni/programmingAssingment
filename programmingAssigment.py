@@ -92,8 +92,8 @@ def addTransaction(df):
         date = datetime.datetime.now()
 
     # Format the date and month
-    dateStr = date.strftime("%d-%m-%Y")
-    monthStr = date.strftime("%m-%Y")
+    dateStr = date.strftime("%Y-%m-%d")
+    monthStr = date.strftime("%Y-%m")
 
     # Add the new transaction to the DataFrame
     newEntry = pd.DataFrame([[transactionType, amount, description, dateStr, monthStr, category]],
