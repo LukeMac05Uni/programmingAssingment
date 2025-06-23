@@ -1,0 +1,29 @@
+commit 80321d560ab00e886f5ad5d16db4ae78625bef22
+Author: LukeMac05Uni <Luke.MacDonald.219@cranfield.ac.uk>
+Date:   Sun Jun 22 23:17:20 2025 +0000
+
+    Added pie chart and bar chart functions
+
+commit 489afd2f270ef509308c78497bb8b729db14b1f1
+Author: LukeMac05Uni <Luke.MacDonald.219@cranfield.ac.uk>
+Date:   Sun Jun 22 22:40:32 2025 +0000
+
+    Added Update, Delete and Show balance functions
+
+commit 7038eaca391f3e06a32a8acad401db16c8992097
+Author: LukeMac05Uni <Luke.MacDonald.219@cranfield.ac.uk>
+Date:   Sun Jun 22 22:02:14 2025 +0000
+
+    Added save data, add transaction and view transaction functions
+
+commit 5de04d0553289fab27cc205aa90e304597ea588b
+Author: LukeMac05Uni <Luke.MacDonald.219@cranfield.ac.uk>
+Date:   Sun Jun 22 21:08:27 2025 +0000
+
+    Created main menu definition, with some basic options to start with. Also created load data definition, which checks if the excel file exists and creates it if not and then retrieves the data and stores it in a dataframe.
+
+commit fd7005856ec55acdb81a57ba6993a5d182b6e5ab
+Author: LukeMac05Uni <Luke.MacDonald.219@cranfield.ac.uk>
+Date:   Sun Jun 22 22:04:06 2025 +0100
+
+    Initial commit
